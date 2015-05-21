@@ -12,7 +12,8 @@ def main_client():
    
     host = '140.123.102.181'
     port = 3003
-    #istalk = 0
+    istalk = 0
+    talkwho =''
     initlog = 0
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2)
@@ -42,7 +43,21 @@ def main_client():
                     print ('\nDisconnected from chat server')
                     sys.exit()
                 else :
-                    print(data.decode('utf-8'))
+                    tmp = data.decode('utf-8')
+                    temp =tmp.split()
+                    if(temp[len(temp)-1] == 'talknow'):
+                        istalk = 1
+                        talkwho =str(temp[0])
+                        buff=''
+                        num=2
+                        while(num < (len(temp)-1)):
+                            buff = buff + temp[num] + ' '
+                            num += 1
+                        #buff = temp[len(temp)-1] + ' says:'+ buff
+                        print(buff)
+                    else:
+                        print(data.decode('utf-8'))
+                    
             
             else :
                 # user entered a message
@@ -53,15 +68,25 @@ def main_client():
                 else:
                     msg = input('')
                     boxa = msg.split()
-                    if(msg == 'listuser'):
-                        s.send(str.encode('listuser '+user))
-                    elif (msg == 'logout'):
-                        s.send(str.encode('logout '+user))
-                        sys.exit()
-                    elif (msg[0:9] == 'broadcast'):
-                        s.send(str.encode(msg + ' ' + user))
-                    elif(msg[0:4] == 'send'):
-                        s.send(str.encode(msg + ' ' + user))
+                    if(msg == 'exit talk'):
+                        istalk = 0
+                        talkwho = ''
+                    if (istalk == 1):
+                        s.send(str.encode('send '+ talkwho +' '+ msg + ' talknow '+ user ))
+                    else:
+                        if(msg == 'listuser'):
+                           s.send(str.encode('listuser '+user))
+                        elif (msg == 'logout'):
+                           s.send(str.encode('logout '+user))
+                           sys.exit()
+                        elif (msg[0:9] == 'broadcast'):
+                           s.send(str.encode(msg + ' ' + user))
+                        elif(msg[0:4] == 'send'):
+                           s.send(str.encode(msg + ' ' + user))
+                        elif(msg[0:4] == 'talk'):
+                           #s.send(str.encode(msg + ' ' + user))
+                           istalk = 1
+                           talkwho = boxa[1]
 
 if __name__ == "__main__":
 

@@ -30,34 +30,29 @@ if __name__ == "__main__":
     server_socket.bind(('0.0.0.0', 3003))
     server_socket.listen(10)
  
-    # add server socket object to the list of readable connections
+    
     SOCKET_LIST.append(server_socket)
     
     print ('Server started!')
  
     while 1:
-        # get the list sockets which are ready to be read through select
-        # 4th arg, time_out  = 0 : poll and never block
+       
         read_sockets,write_sockets,error_sockets = select.select(SOCKET_LIST,[],[],0)
       
         for sock in read_sockets:
-            #print('1')
-            # a new connection request recieved
+       
             if (sock == server_socket): 
                 sc, sockname = server_socket.accept()
                 SOCKET_LIST.append(sc)
-                #broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
-                #print('2\n')
-            # a message from a client, not a new connection
+                
             else:
-                # process data recieved from client, 
+                 
                 try:
-                    # receiving data from the socket.
+                    
                     data = sock.recv(RECV_BUFFER)
                   
                     if data:
                         dedata = data.decode("utf-8")
-                        #print(dedata)
                         userpwd = dedata.split(' ')
                         if (userpwd[0] == 'Tom'):
                              if(userpwd[1] == '0615'):
@@ -95,7 +90,7 @@ if __name__ == "__main__":
                                      while(num < (len(userpwd)-1)):
                                            buff = buff + userpwd[num] + ' '
                                            num += 1
-                                     buff = userpwd[len(userpwd)-1] + ' says:'+ buff
+                                     buff = userpwd[len(userpwd)-1] + ' says :'+ buff
                                      SOCKET_LIST[flag].sendall(str.encode(buff))
                                  flag += 1
                              if(isoff == 0 ):
@@ -104,7 +99,7 @@ if __name__ == "__main__":
                                  while(num < (len(userpwd)-1)):
                                      buff = buff + userpwd[num] + ' '
                                      num += 1
-                                 buff = userpwd[len(userpwd)-1] + ' says:'+ buff
+                                 buff = userpwd[len(userpwd)-1] + ' says :'+ buff
 
                                  if(userpwd[1] == 'Tom'):
                                      offTom = buff
@@ -125,15 +120,7 @@ if __name__ == "__main__":
                                   buff = buff + userpwd[num] + ' '
                                   num += 1
                              buff = userpwd[len(userpwd)-1] + ' broadcast says : '+ buff
-                             broadcast(server_socket,sock,str.encode(buff))
-                        # there is something in the socket
-                        # print "Broadcast all!"
-                        #broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)  
-                    
-                        # at this stage, no data means probably the connection has been broken
-                       # broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr) 
-
-                # exception 
+                             broadcast(server_socket,sock,str.encode(buff)) 
                 except:
                     print('')  
    
